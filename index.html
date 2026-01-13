@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Higher Education Programs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 300vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .laptop-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            perspective: 1000px;
+        }
+
+        .laptop-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 30px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .laptop-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 380px;
+            background: #1a202c;
+            border: 20px solid #2d3748;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .layer {
+            position: absolute;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .layer.active {
+            opacity: 1;
+        }
+
+        /* Layer positioning - they'll expand outward */
+        .layer-1 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 1;
+        }
+        .layer-1.active { 
+            transform: translate(-50%, -250%) scale(1);
+        }
+
+        .layer-2 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 2;
+        }
+        .layer-2.active { 
+            transform: translate(-150%, -150%) scale(1);
+        }
+
+        .layer-3 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 3;
+        }
+        .layer-3.active { 
+            transform: translate(50%, -150%) scale(1);
+        }
+
+        .layer-4 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 4;
+        }
+        .layer-4.active { 
+            transform: translate(-150%, 50%) scale(1);
+        }
+
+        .layer-5 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 5;
+        }
+        .layer-5.active { 
+            transform: translate(50%, 50%) scale(1);
+        }
+
+        .layer-6 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 6;
+        }
+        .layer-6.active { 
+            transform: translate(-50%, 150%) scale(1);
+        }
+
+        .layer-7 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 7;
+        }
+        .layer-7.active { 
+            transform: translate(-200%, -50%) scale(1);
+        }
+
+        .layer-8 { 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.5);
+            z-index: 8;
+        }
+        .layer-8.active { 
+            transform: translate(100%, -50%) scale(1);
+        }
+
+        .icon-wrapper {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 140px;
+        }
+
+        .icon-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .intro-text {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .intro-text h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .intro-text p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            opacity: 0.8;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .laptop-container.expanded .laptop-screen {
+            transform: translate(-50%, -50%) scale(1.8);
+        }
+
+        .laptop-container.expanded .laptop-base {
+            opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            .laptop-screen {
+                width: 90vw;
+                height: 60vw;
+            }
+            
+            .laptop-base {
+                width: 95vw;
+            }
+
+            .intro-text h1 {
+                font-size: 32px;
+            }
+
+            .intro-text p {
+                font-size: 16px;
+            }
+
+            .icon-wrapper {
+                padding: 20px;
+                min-width: 100px;
+            }
+
+            .layer {
+                font-size: 32px;
+            }
+
+            .icon-label {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sticky-wrapper">
+            <div class="intro-text" id="introText">
+                <h1>Building Higher Education Programs</h1>
+                <p>Scroll to explore the layers</p>
+            </div>
+
+            <div class="laptop-container" id="laptopContainer">
+                <div class="laptop-screen">
+                    <div class="screen-content">
+                        <!-- Layer 1: Books -->
+                        <div class="layer layer-1" data-layer="1">
+                            <div class="icon-wrapper">
+                                <div>📚</div>
+                                <div class="icon-label">Curriculum<br>Materials</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 2: Research -->
+                        <div class="layer layer-2" data-layer="2">
+                            <div class="icon-wrapper">
+                                <div>🔬</div>
+                                <div class="icon-label">Research<br>& Evidence</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 3: Faculty -->
+                        <div class="layer layer-3" data-layer="3">
+                            <div class="icon-wrapper">
+                                <div>👥</div>
+                                <div class="icon-label">Expert<br>Faculty</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 4: Technology -->
+                        <div class="layer layer-4" data-layer="4">
+                            <div class="icon-wrapper">
+                                <div>💻</div>
+                                <div class="icon-label">Learning<br>Technology</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 5: Assessment -->
+                        <div class="layer layer-5" data-layer="5">
+                            <div class="icon-wrapper">
+                                <div>✏️</div>
+                                <div class="icon-label">Assessment<br>& Feedback</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 6: Support -->
+                        <div class="layer layer-6" data-layer="6">
+                            <div class="icon-wrapper">
+                                <div>🤝</div>
+                                <div class="icon-label">Student<br>Support</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 7: Accreditation -->
+                        <div class="layer layer-7" data-layer="7">
+                            <div class="icon-wrapper">
+                                <div>🎓</div>
+                                <div class="icon-label">Accreditation<br>Standards</div>
+                            </div>
+                        </div>
+
+                        <!-- Layer 8: Innovation -->
+                        <div class="layer layer-8" data-layer="8">
+                            <div class="icon-wrapper">
+                                <div>💡</div>
+                                <div class="icon-label">Innovation<br>& Design</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="laptop-base"></div>
+            </div>
+
+            <div class="scroll-indicator" id="scrollIndicator">
+                ↓ Scroll Down
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const laptopContainer = document.getElementById('laptopContainer');
+        const introText = document.getElementById('introText');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        const layers = document.querySelectorAll('.layer');
+
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            const scrollPixels = window.scrollY;
+
+            // Fade out intro text and scroll indicator
+            if (scrollPixels > 100) {
+                introText.style.opacity = Math.max(0, 1 - scrollPixels / 300);
+                scrollIndicator.style.opacity = Math.max(0, 1 - scrollPixels / 300);
+            }
+
+            // Expand laptop around 20% scroll
+            if (scrollPercent > 0.1) {
+                laptopContainer.classList.add('expanded');
+            } else {
+                laptopContainer.classList.remove('expanded');
+            }
+
+            // Activate layers progressively
+            const layerThresholds = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
+            
+            layers.forEach((layer, index) => {
+                if (scrollPercent > layerThresholds[index]) {
+                    layer.classList.add('active');
+                } else {
+                    layer.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
